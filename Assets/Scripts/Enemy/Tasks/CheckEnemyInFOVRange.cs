@@ -20,12 +20,18 @@ public class CheckEnemyInFOVRange : Node
 
             if (colliders.Length > 0)
             {
-                parent.parent.SetData("target", colliders[0].transform);
 
+                parent.parent.SetData("target", colliders[0].transform);
+                parent.parent.SetData("isChasing", true);
                 state = NodeState.SUCCESS;
                 return state;
             }
-            state = NodeState.FAILURE;
+
+
+            //return something in parent to check that there is no target( must be an object)
+            parent.parent.SetData("isChasing", false);
+
+            state = NodeState.SUCCESS;
             return state;
     }
 

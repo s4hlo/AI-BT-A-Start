@@ -21,56 +21,60 @@ public class TaskGoToTarget : Node
 
     public override NodeState Evaluate()
     {
-        _currentPath.Clear();
-        if (GetData("target").Equals(null) )
+        if (!(bool)GetData("isChasing"))
         {
             Debug.Log("No target, path cleared");
-            _currentPath.Clear();
+            // set current path as empty
+            _currentPath = new List<Vector3>();
             state = NodeState.FAILURE;
             return state;
         }
-
-        Transform targetTransform = (Transform)GetData("target");
-
-        Debug.Log("target: " + targetTransform.position);
-
-        _target = targetTransform.position;
-        if (_waiting)
-        {
-            _waitCounter += Time.deltaTime;
-            if (_waitCounter >= _waitTime)
-            {
-                _waiting = false;
-            }
-        }
         else
         {
-            if (_currentPath == null || _currentPath.Count == 0)
+
+
+            Transform targetTransform = (Transform)GetData("target");
+
+            Debug.Log("target: " + targetTransform.position);
+
+            _target = targetTransform.position;
+            if (_waiting)
             {
-                _waitCounter = 0f;
-                _currentPath = CalculatePathToTarget();
-                _waiting = true;
+                _waitCounter += Time.deltaTime;
+                if (_waitCounter >= _waitTime)
+                {
+                    _waiting = false;
+                }
             }
             else
-
-            if (_currentPath != null && _currentPath.Count > 0)
             {
-                Vector3 nextWaypoint = _currentPath[0];
-
-                if (Vector3.Distance(_transform.position, nextWaypoint) < 0.01f)
+                if (_currentPath == null || _currentPath.Count == 0)
                 {
-                    _currentPath.RemoveAt(0);
+                    _waitCounter = 0f;
+                    _currentPath = CalculatePathToTarget();
+                    _waiting = true;
                 }
                 else
-                {
-                    _transform.position = Vector3.MoveTowards(_transform.position, nextWaypoint, EnemyBT.speed * Time.deltaTime);
-                    _transform.LookAt(nextWaypoint);
-                }
-            }
 
+                if (_currentPath != null && _currentPath.Count > 0)
+                {
+                    Vector3 nextWaypoint = _currentPath[0];
+
+                    if (Vector3.Distance(_transform.position, nextWaypoint) < 0.01f)
+                    {
+                        _currentPath.RemoveAt(0);
+                    }
+                    else
+                    {
+                        _transform.position = Vector3.MoveTowards(_transform.position, nextWaypoint, EnemyBT.speed * Time.deltaTime);
+                        _transform.LookAt(nextWaypoint);
+                    }
+                }
+
+            }
+            state = NodeState.RUNNING;
+            return state;
         }
-        state = NodeState.RUNNING;
-        return state;
     }
 
     private List<Vector3> CalculatePathToTarget()

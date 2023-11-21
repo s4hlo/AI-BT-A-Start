@@ -12,7 +12,7 @@ public class TaskPatrol : Node
     private int _lastPatrolPointIndex = 0;
     private int[,] _map;
 
-    private readonly float _waitTime = 2f; // in seconds
+    private readonly float _waitTime = 0.1f; // in seconds
     private float _waitCounter = 0f;
     private bool _waiting = false;
 
