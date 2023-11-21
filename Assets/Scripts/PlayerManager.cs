@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerManager : MonoBehaviour
 {
     private int _healthPoints;
+    [SerializeField]
+    private float _speed = 30f;
 
     private void Awake()
     {
@@ -37,7 +39,7 @@ public class PlayerManager : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        transform.Translate(new Vector3(-verticalInput, 0f, horizontalInput) * 30f * Time.deltaTime, Space.Self);
+        transform.Translate(new Vector3(-verticalInput, 0f, horizontalInput) * _speed * Time.deltaTime, Space.Self);
 
 
     }

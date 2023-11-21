@@ -29,14 +29,26 @@ namespace Pathfinder
         // ? Unity - update return type to Vector3 ( before was List<Node> - this scope Node )
         public static List<Vector3> FindPath(int[,] grid, int startX, int startY, int endX, int endY)
         {
+            // ? Error handling
+            if (grid == null)
+                return null; // No grid found
+            if (startX < 0 || startX >= grid.GetLength(0))
+                return null; // No path found
+            if (startY < 0 || startY >= grid.GetLength(1))
+                return null; // No path found
+            // TODO add missing checks
+
+
+
+
             int width = grid.GetLength(0);
             int height = grid.GetLength(1);
 
-            Node startNode = new Node(startX, startY);
-            Node endNode = new Node(endX, endY);
+            Node startNode = new(startX, startY);
+            Node endNode = new(endX, endY);
 
-            List<Node> openList = new List<Node>();
-            List<Node> closedList = new List<Node>();
+            List<Node> openList = new();
+            List<Node> closedList = new();
 
             openList.Add(startNode);
 
@@ -57,7 +69,7 @@ namespace Pathfinder
                 if (currentNode.X == endNode.X && currentNode.Y == endNode.Y)
                 {
                     // Found the path, reconstruct and return it
-                    List<Node> path = new List<Node>();
+                    List<Node> path = new();
                     while (currentNode != null)
                     {
                         path.Add(currentNode);
@@ -67,34 +79,40 @@ namespace Pathfinder
 
                     // ? Unity - convert path to vector3
 
-                    List<Vector3> pathVector3 = new List<Vector3>();
+                    List<Vector3> pathVector3 = new();
                     foreach (var node in path)
                     {
                         pathVector3.Add(new Vector3(node.X, 1, node.Y));
                     }
-
                     return pathVector3;
                 }
 
-                List<Node> neighbors = new List<Node>();
+                List<Node> neighbors = new();
 
                 // Generate neighboring nodes in clockwise order
                 if (currentNode.X - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y] == 0)
                     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y)); // Left
-                if (currentNode.X - 1 >= 0 && currentNode.Y - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y - 1] == 0)
-                    neighbors.Add(new Node(currentNode.X - 1, currentNode.Y - 1)); // Top Left
+
+                // if (currentNode.X - 1 >= 0 && currentNode.Y - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y - 1] == 0)
+                //     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y - 1)); // Top Left
+
                 if (currentNode.Y - 1 >= 0 && grid[currentNode.X, currentNode.Y - 1] == 0)
                     neighbors.Add(new Node(currentNode.X, currentNode.Y - 1)); // Top
-                if (currentNode.X + 1 < width && currentNode.Y - 1 >= 0 && grid[currentNode.X + 1, currentNode.Y - 1] == 0)
-                    neighbors.Add(new Node(currentNode.X + 1, currentNode.Y - 1)); // Top Right
+
+                // if (currentNode.X + 1 < width && currentNode.Y - 1 >= 0 && grid[currentNode.X + 1, currentNode.Y - 1] == 0)
+                //     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y - 1)); // Top Right
+
                 if (currentNode.X + 1 < width && grid[currentNode.X + 1, currentNode.Y] == 0)
                     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y)); // Right
-                if (currentNode.X + 1 < width && currentNode.Y + 1 < height && grid[currentNode.X + 1, currentNode.Y + 1] == 0)
-                    neighbors.Add(new Node(currentNode.X + 1, currentNode.Y + 1)); // Bottom Right
+
+                // if (currentNode.X + 1 < width && currentNode.Y + 1 < height && grid[currentNode.X + 1, currentNode.Y + 1] == 0)
+                //     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y + 1)); // Bottom Right
+
                 if (currentNode.Y + 1 < height && grid[currentNode.X, currentNode.Y + 1] == 0)
                     neighbors.Add(new Node(currentNode.X, currentNode.Y + 1)); // Bottom
-                if (currentNode.X - 1 >= 0 && currentNode.Y + 1 < height && grid[currentNode.X - 1, currentNode.Y + 1] == 0)
-                    neighbors.Add(new Node(currentNode.X - 1, currentNode.Y + 1)); // Bottom Left
+
+                // if (currentNode.X - 1 >= 0 && currentNode.Y + 1 < height && grid[currentNode.X - 1, currentNode.Y + 1] == 0)
+                //     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y + 1)); // Bottom Left
 
 
 
@@ -110,22 +128,27 @@ namespace Pathfinder
                         neighbor.Parent = currentNode;
                         neighbor.G = tentativeG;
                         // use Manhattan distance as heuristic
-                        neighbor.H = Math.Abs(neighbor.X - endNode.X) + Math.Abs(neighbor.Y - endNode.Y);
+                        // neighbor.H = Math.Abs(neighbor.X - endNode.X) + Math.Abs(neighbor.Y - endNode.Y);
                         // use Euclidean distance as heuristic
-                        // neighbor.Heuristic = (int) Math.Sqrt(Math.Pow(neighbor.X - endNode.X, 2) + Math.Pow(neighbor.Y - endNode.Y, 2));
+                        neighbor.H = (int) Math.Sqrt(Math.Pow(neighbor.X - endNode.X, 2) + Math.Pow(neighbor.Y - endNode.Y, 2));
 
                         if (!openList.Contains(neighbor))
                             openList.Add(neighbor);
                     }
                 }
             }
-
             return null; // No path found
         }
 
         public static int[,] GenerateMap(int width, int height)
         {
             int[,] map = new int[width, height];
+
+            //instance a plane with size width/10 x height/10 and position width/2 x height/2
+            GameObject plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
+            plane.transform.position = new Vector3(width / 2, 0, height / 2);
+            plane.transform.localScale = new Vector3(width / 10, 1, height / 10);
+
 
             GameObject[] obstacles = GameObject.FindGameObjectsWithTag("Obstacle");
             foreach (GameObject obstacle in obstacles)
@@ -134,57 +157,24 @@ namespace Pathfinder
                 map[(int)position.x, (int)position.z] = 1;
             }
 
+            //print map
+            string mapString = "";
+            for (int y = 0; y < height; y++)
+            {
+                string line = "";
+                for (int x = 0; x < width; x++)
+                {
+                    line += map[x, y];
+                }
+                mapString += "[" + line + "]\n";
+            }
+
+            Debug.Log(mapString);
+
+
             return map;
 
         }
-
-        // Test the algorithm
-        public static void Example()
-        {
-            int[,] grid = new int[,]
-            {
-            {0, 0, 0, 0, 0},
-            {1, 0, 0, 0, 0},
-            {0, 1, 1, 1, 0},
-            {0, 1, 1, 1, 0},
-            {0, 0, 0, 0, 0}
-            };
-
-            // define a 10x10 maze
-
-            // int[,] grid = new int[,]
-            // {
-            //     {0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
-            //     {1, 1, 1, 0, 1, 1, 0, 1, 0, 0},
-            //     {0, 0, 1, 0, 1, 1, 0, 1, 0, 0},
-            //     {0, 1, 1, 0, 0, 1, 0, 1, 0, 0},
-            //     {0, 1, 0, 0, 1, 1, 0, 1, 0, 0},
-            //     {0, 1, 1, 1, 1, 0, 0, 1, 0, 0},
-            //     {0, 1, 0, 0, 1, 0, 1, 1, 0, 0},
-            //     {0, 1, 1, 0, 0, 0, 0, 1, 0, 0},
-            //     {0, 0, 1, 1, 1, 1, 0, 1, 0, 0},
-            //     {0, 1, 1, 0, 0, 0, 0, 0, 0, 0}
-            // };
-
-            int startX = 0;
-            int startY = 0;
-            int endX = 4;
-            int endY = 4;
-
-            List<Vector3> path = FindPath(grid, startX, startY, endX, endY);
-            if (path == null)
-            {
-                Debug.Log("No path found");
-                return;
-            }
-
-            foreach (var node in path)
-            {
-                Debug.Log("EXEMPLO INSANO");
-                Debug.Log($"({node.x}, {node.z})");
-            }
-        }
-
 
     }
 

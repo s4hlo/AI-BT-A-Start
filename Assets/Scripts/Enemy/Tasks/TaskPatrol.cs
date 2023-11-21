@@ -10,7 +10,7 @@ public class TaskPatrol : Node
     private int _currentWaypointIndex = 0;
     private int[,] _map;
 
-    private float _waitTime = 1f; // in seconds
+    private readonly float _waitTime = 0.5f; // in seconds
     private float _waitCounter = 0f;
     private bool _waiting = false;
 
@@ -25,12 +25,10 @@ public class TaskPatrol : Node
     {
         if (_waiting)
         {
-            Debug.Log("WAITING");
             _waitCounter += Time.deltaTime;
             if (_waitCounter >= _waitTime)
             {
                 _waiting = false;
-                _currentPath = CalculatePathToNextWaypoint();
             }
         }
         else
@@ -38,6 +36,7 @@ public class TaskPatrol : Node
             if (_currentPath == null || _currentPath.Count == 0)
             {
                 _waitCounter = 0f;
+                _currentPath = CalculatePathToNextWaypoint();
                 _waiting = true;
             }
             else
