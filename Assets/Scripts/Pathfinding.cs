@@ -32,9 +32,19 @@ namespace Pathfinder
             // ? Error handling
             if (grid == null)
                 return null; // No grid found
-            if (startX < 0 || startX >= grid.GetLength(0))
-                return null; // No path found
-            if (startY < 0 || startY >= grid.GetLength(1))
+            if (endX >= grid.GetLength(0) ) {
+                endX = grid.GetLength(0) - 1;
+            }
+            if (endY >= grid.GetLength(1) ) {
+                endY = grid.GetLength(1) - 1;
+            }
+            if (endX < 0) {
+                endX = 0;
+            }
+            if (endY < 0) {
+                endY = 0;
+            }
+            if (grid[endX, endY] == 1)
                 return null; // No path found
             // TODO add missing checks
 

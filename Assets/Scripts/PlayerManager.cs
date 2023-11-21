@@ -5,6 +5,8 @@ public class PlayerManager : MonoBehaviour
     private int _healthPoints;
     [SerializeField]
     private float _speed = 30f;
+    private Rigidbody rb;
+
 
     private void Awake()
     {
@@ -29,6 +31,14 @@ public class PlayerManager : MonoBehaviour
         _healthPoints = 30;
     }
 
+    void Start()
+    {
+        // get rigidbody
+        rb = GetComponent<Rigidbody>();
+        
+
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R))
@@ -39,8 +49,11 @@ public class PlayerManager : MonoBehaviour
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        transform.Translate(new Vector3(-verticalInput, 0f, horizontalInput) * _speed * Time.deltaTime, Space.Self);
+        // move the player using rb.velocity
+        rb.velocity = new Vector3(-verticalInput * _speed, rb.velocity.y, horizontalInput * _speed);
 
 
-    }
+
+
+    }        
 }

@@ -40,7 +40,7 @@ public class EnemyBT : Tree
             new Sequence(new List<Node>
             {
                 new CheckEnemyInFOVRange(transform),
-                new TaskGoToTarget(transform),
+                new TaskGoToTarget(transform, map),
             }),
             new TaskPatrol(transform, waypoints, map),
         });
