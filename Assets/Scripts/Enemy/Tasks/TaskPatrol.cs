@@ -1,23 +1,25 @@
 using UnityEngine;
 using BehaviorTree;
 using System.Collections.Generic;
+using System;
 
 public class TaskPatrol : Node
 {
     private Transform _transform;
-    private Transform[] _marks;
+    private Transform[] _patrolPoints;
     private List<Vector3> _currentPath;
-    private int _currentWaypointIndex = 0;
+    private int _currentPatrolPointIndex = 0;
+    private int _lastPatrolPointIndex = 0;
     private int[,] _map;
 
-    private readonly float _waitTime = 0.5f; // in seconds
+    private readonly float _waitTime = 2f; // in seconds
     private float _waitCounter = 0f;
     private bool _waiting = false;
 
     public TaskPatrol(Transform transform, Transform[] waypoints, int[,] map)
     {
         _transform = transform;
-        _marks = waypoints;
+        _patrolPoints = waypoints;
         _map = map;
     }
 
@@ -35,8 +37,25 @@ public class TaskPatrol : Node
         {
             if (_currentPath == null || _currentPath.Count == 0)
             {
+
+                Vector3 currentPatrolPoint = new(_patrolPoints[_currentPatrolPointIndex].position.x, 1, _patrolPoints[_currentPatrolPointIndex].position.z);
+                Vector3 lastPatrolPoint = new(_patrolPoints[_lastPatrolPointIndex].position.x, 1, _patrolPoints[_lastPatrolPointIndex].position.z);
+
+                float distanceToCurrentWaypoint = Vector3.Distance(_transform.position, currentPatrolPoint);
+                float distanceLastToCurrent = Vector3.Distance(lastPatrolPoint, currentPatrolPoint);
+
+                if (distanceToCurrentWaypoint > distanceLastToCurrent + 1)
+                {
+                    Debug.Log("unlock path out of patrol");
+                    _currentPath = CalculatePathToNextWaypointWithAStar();
+                }
+                else
+                {
+                    Debug.Log("unlock path direct in patrol");
+                    _currentPath = CalculatePathToNextWaypointDirect();
+                }
+
                 _waitCounter = 0f;
-                _currentPath = CalculatePathToNextWaypoint();
                 _waiting = true;
             }
             else
@@ -61,20 +80,44 @@ public class TaskPatrol : Node
         return state;
     }
 
-    private List<Vector3> CalculatePathToNextWaypoint()
+    private List<Vector3> CalculatePathToNextWaypointDirect()
     {
-        if (_currentWaypointIndex >= _marks.Length)
+        if (_currentPatrolPointIndex >= _patrolPoints.Length)
         {
-            _currentWaypointIndex = 0;
+            _lastPatrolPointIndex = _patrolPoints.Length - 1;
+            _currentPatrolPointIndex = 0;
 
         }
 
-        Transform nextWaypoint = _marks[_currentWaypointIndex];
+        List<Vector3> path = new()
+        { 
+            new(_patrolPoints[_currentPatrolPointIndex].position.x, 1, _patrolPoints[_currentPatrolPointIndex].position.z)
+        };
+
+        _lastPatrolPointIndex = _currentPatrolPointIndex;
+
+        _currentPatrolPointIndex = (_currentPatrolPointIndex + 1) % _patrolPoints.Length;
+
+        return path;
+    }
+
+    private List<Vector3> CalculatePathToNextWaypointWithAStar()
+    {
+        if (_currentPatrolPointIndex >= _patrolPoints.Length)
+        {
+            _lastPatrolPointIndex = _patrolPoints.Length - 1;
+            _currentPatrolPointIndex = 0;
+
+        }
+
+        Transform nextWaypoint = _patrolPoints[_currentPatrolPointIndex];
         List<Vector3> path = Pathfinder.AStar.FindPath(_map, (int)_transform.position.x, (int)_transform.position.z, (int)nextWaypoint.position.x, (int)nextWaypoint.position.z);
 
         Debug.Log($"Path: {PathToString(path)}");
 
-        _currentWaypointIndex = (_currentWaypointIndex + 1) % _marks.Length;
+        _lastPatrolPointIndex = _currentPatrolPointIndex;
+
+        _currentPatrolPointIndex = (_currentPatrolPointIndex + 1) % _patrolPoints.Length;
 
         return path;
     }
