@@ -113,7 +113,7 @@ public class TaskPatrol : Node
         Transform nextWaypoint = _patrolPoints[_currentPatrolPointIndex];
         List<Vector3> path = Pathfinder.AStar.FindPath(_map, (int)_transform.position.x, (int)_transform.position.z, (int)nextWaypoint.position.x, (int)nextWaypoint.position.z);
 
-        Debug.Log($"Path: {PathToString(path)}");
+        Debug.Log($"Path Patrol: {PathToString(path)}");
 
         _lastPatrolPointIndex = _currentPatrolPointIndex;
 

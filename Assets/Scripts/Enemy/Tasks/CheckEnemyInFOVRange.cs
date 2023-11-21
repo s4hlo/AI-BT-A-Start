@@ -15,20 +15,18 @@ public class CheckEnemyInFOVRange : Node
 
     public override NodeState Evaluate()
     {
-        // Debug.Log("START EVALUATE CHECK ENEMY IN FOV RANGE");
-        Collider[] colliders = Physics.OverlapSphere(
-            _transform.position, EnemyBT.fovRange, _enemyLayerMask);
+            Collider[] colliders = Physics.OverlapSphere(
+                _transform.position, EnemyBT.fovRange, _enemyLayerMask);
 
-        if (colliders.Length > 0)
-        {
-            parent.parent.SetData("target", colliders[0].transform);
-            state = NodeState.SUCCESS;
+            if (colliders.Length > 0)
+            {
+                parent.parent.SetData("target", colliders[0].transform);
+
+                state = NodeState.SUCCESS;
+                return state;
+            }
+            state = NodeState.FAILURE;
             return state;
-        }
-
-        state = NodeState.FAILURE;
-        return state;
-
     }
 
 }

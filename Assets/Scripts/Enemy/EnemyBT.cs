@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Numerics;
 using BehaviorTree;
 
 public class EnemyBT : Tree
@@ -37,13 +38,26 @@ public class EnemyBT : Tree
                new CheckEnemyInAttackRange(transform),
                new TaskAttack(transform),
             }),
-            new Sequence(new List<Node>
+
+            new Selector(new List<Node>
             {
-                new CheckEnemyInFOVRange(transform),
-                new TaskGoToTarget(transform, map),
+                new Sequence(new List<Node>
+                {
+                    new CheckEnemyInFOVRange(transform),
+                    new TaskGoToTarget(transform, map),
+                }),
+                new TaskPatrol(transform, waypoints, map),
             }),
-            new TaskPatrol(transform, waypoints, map),
+
+
+            // new Sequence(new List<Node>
+            // {
+            //     new CheckEnemyInFOVRange(transform),
+            //     new TaskGoToTarget(transform, map),
+            // }),
+            // new TaskPatrol(transform, waypoints, map),
         });
+
 
         return root;
     }

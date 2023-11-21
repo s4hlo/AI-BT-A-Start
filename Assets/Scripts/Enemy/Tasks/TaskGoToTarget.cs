@@ -21,7 +21,18 @@ public class TaskGoToTarget : Node
 
     public override NodeState Evaluate()
     {
+        _currentPath.Clear();
+        if (GetData("target").Equals(null) )
+        {
+            Debug.Log("No target, path cleared");
+            _currentPath.Clear();
+            state = NodeState.FAILURE;
+            return state;
+        }
+
         Transform targetTransform = (Transform)GetData("target");
+
+        Debug.Log("target: " + targetTransform.position);
 
         _target = targetTransform.position;
         if (_waiting)
@@ -65,7 +76,7 @@ public class TaskGoToTarget : Node
     private List<Vector3> CalculatePathToTarget()
     {
         List<Vector3> path = Pathfinder.AStar.FindPath(_map, (int)_transform.position.x, (int)_transform.position.z, (int)_target.x, (int)_target.z);
-        Debug.Log($"Path: {PathToString(path)}");
+        Debug.Log($"Path Go To Target: {PathToString(path)}");
         return path;
     }
 
