@@ -23,8 +23,6 @@ public class TaskGoToTarget : Node
     {
         if (!(bool)GetData("isChasing"))
         {
-            Debug.Log("No target, path cleared");
-            // set current path as empty
             _currentPath = new List<Vector3>();
             state = NodeState.FAILURE;
             return state;
@@ -35,7 +33,7 @@ public class TaskGoToTarget : Node
 
             Transform targetTransform = (Transform)GetData("target");
 
-            Debug.Log("target: " + targetTransform.position);
+            // Debug.Log("target: " + targetTransform.position);
 
             _target = targetTransform.position;
             if (_waiting)

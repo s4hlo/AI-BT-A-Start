@@ -8,7 +8,7 @@ public class EnemyBT : Tree
 
     public static float speed = 10f;
     public static float fovRange = 6f;
-    public static float attackRange = 1f;
+    public static float attackRange = 2f;
 
     public static int[,] map = new int[,]
     {

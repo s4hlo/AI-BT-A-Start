@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace BehaviorTree
@@ -22,7 +23,7 @@ namespace BehaviorTree
         {
             parent = null;
         }
-        
+
         public Node(List<Node> children)
         {
             foreach (Node child in children)
@@ -36,6 +37,7 @@ namespace BehaviorTree
         }
 
         public virtual NodeState Evaluate() => NodeState.FAILURE;
+        public virtual Boolean OnEnter() => false;
 
         public void SetData(string key, object value)
         {

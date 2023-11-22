@@ -103,26 +103,26 @@ namespace Pathfinder
                 if (currentNode.X - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y] == 0)
                     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y)); // Left
 
-                // if (currentNode.X - 1 >= 0 && currentNode.Y - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y - 1] == 0)
-                //     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y - 1)); // Top Left
+                if (currentNode.X - 1 >= 0 && currentNode.Y - 1 >= 0 && grid[currentNode.X - 1, currentNode.Y - 1] == 0)
+                    neighbors.Add(new Node(currentNode.X - 1, currentNode.Y - 1)); // Top Left
 
                 if (currentNode.Y - 1 >= 0 && grid[currentNode.X, currentNode.Y - 1] == 0)
                     neighbors.Add(new Node(currentNode.X, currentNode.Y - 1)); // Top
 
-                // if (currentNode.X + 1 < width && currentNode.Y - 1 >= 0 && grid[currentNode.X + 1, currentNode.Y - 1] == 0)
-                //     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y - 1)); // Top Right
+                if (currentNode.X + 1 < width && currentNode.Y - 1 >= 0 && grid[currentNode.X + 1, currentNode.Y - 1] == 0)
+                    neighbors.Add(new Node(currentNode.X + 1, currentNode.Y - 1)); // Top Right
 
                 if (currentNode.X + 1 < width && grid[currentNode.X + 1, currentNode.Y] == 0)
                     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y)); // Right
 
-                // if (currentNode.X + 1 < width && currentNode.Y + 1 < height && grid[currentNode.X + 1, currentNode.Y + 1] == 0)
-                //     neighbors.Add(new Node(currentNode.X + 1, currentNode.Y + 1)); // Bottom Right
+                if (currentNode.X + 1 < width && currentNode.Y + 1 < height && grid[currentNode.X + 1, currentNode.Y + 1] == 0)
+                    neighbors.Add(new Node(currentNode.X + 1, currentNode.Y + 1)); // Bottom Right
 
                 if (currentNode.Y + 1 < height && grid[currentNode.X, currentNode.Y + 1] == 0)
                     neighbors.Add(new Node(currentNode.X, currentNode.Y + 1)); // Bottom
 
-                // if (currentNode.X - 1 >= 0 && currentNode.Y + 1 < height && grid[currentNode.X - 1, currentNode.Y + 1] == 0)
-                //     neighbors.Add(new Node(currentNode.X - 1, currentNode.Y + 1)); // Bottom Left
+                if (currentNode.X - 1 >= 0 && currentNode.Y + 1 < height && grid[currentNode.X - 1, currentNode.Y + 1] == 0)
+                    neighbors.Add(new Node(currentNode.X - 1, currentNode.Y + 1)); // Bottom Left
 
 
 
@@ -138,9 +138,9 @@ namespace Pathfinder
                         neighbor.Parent = currentNode;
                         neighbor.G = tentativeG;
                         // use Manhattan distance as heuristic
-                        // neighbor.H = Math.Abs(neighbor.X - endNode.X) + Math.Abs(neighbor.Y - endNode.Y);
+                        neighbor.H = Math.Abs(neighbor.X - endNode.X) + Math.Abs(neighbor.Y - endNode.Y);
                         // use Euclidean distance as heuristic
-                        neighbor.H = (int) Math.Sqrt(Math.Pow(neighbor.X - endNode.X, 2) + Math.Pow(neighbor.Y - endNode.Y, 2));
+                        // neighbor.H = (int) Math.Sqrt(Math.Pow(neighbor.X - endNode.X, 2) + Math.Pow(neighbor.Y - endNode.Y, 2));
 
                         if (!openList.Contains(neighbor))
                             openList.Add(neighbor);

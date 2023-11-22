@@ -46,12 +46,10 @@ public class TaskPatrol : Node
 
                 if (distanceToCurrentWaypoint > distanceLastToCurrent + 1)
                 {
-                    Debug.Log("unlock path out of patrol");
                     _currentPath = CalculatePathToNextWaypointWithAStar();
                 }
                 else
                 {
-                    Debug.Log("unlock path direct in patrol");
                     _currentPath = CalculatePathToNextWaypointDirect();
                 }
 

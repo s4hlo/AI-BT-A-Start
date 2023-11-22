@@ -29,6 +29,7 @@ public class TaskAttack : Node
         _attackCounter += Time.deltaTime;
         if (_attackCounter >= _attackTime)
         {
+            Debug.Log("ATTACK");
             bool enemyIsDead = _enemyManager.TakeHit();
             if (enemyIsDead)
             {
